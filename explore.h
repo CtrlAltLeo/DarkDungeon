@@ -60,6 +60,11 @@ class room{
 	std::string desc;
 	std::string door_desc;	
 
+	int x;
+	int y;
+	int w;
+	int h;
+
 	
 	int id;	
 		

@@ -5,11 +5,29 @@
 #include <vector>
 #include <fstream>
 
+/* TODO
+	-render rooms
+	-rooms shouldn't multi-connect :P
+	
+	-add combat
+	
+	-add character
+
+	-very rough NPC stuff
+
+*/
+
 using namespace std;
 
-void add_room(vector<room> & rooms, string desc, string door_desc = "AA"){
+void add_room(vector<room> & rooms, string desc, string door_desc = "AA", int x=0, int y=0, int h=0, int w = 0){
 
 	room R;
+	
+	R.x = x;
+	R.y = y;
+	R.h = h;
+	R.w = w;
+
 
 	R.id = rooms.size();
 	R.desc = desc;	
@@ -107,7 +125,7 @@ void generate_dungeon(vector<room> &rooms){
 
 	for (int i = 0; i < room_count; i++){
 		
-		add_room(rooms, descs[rand() % descs.size()], doors[rand() % doors.size()]);
+		add_room(rooms, descs[rand() % descs.size()], doors[rand() % doors.size()], rand()%SCREEN_X, rand()%SCREEN_Y,5,5);
 	}
 	
 	for (auto i : rooms){
@@ -143,6 +161,23 @@ int main(){
 	
 	generate_dungeon(ROOMS);	
 	
+		
+
+	display_screen d;
+
+	d.cls();
+
+	char art[6] = {'@','$','%','&','^','.'};
+
+	for (room R: ROOMS){
+		
+		d.rect_fill(R.x, R.y, R.x + R.w, R.y+R.h, art[rand()%6]);
+	}
+
+
+	d.draw();
+
+	/*	
 	while(true){
 		print_desc(ROOMS, active_room);
 
@@ -151,6 +186,7 @@ int main(){
 		active_room = ROOMS[active_room].get_door_id(in);	
 
 	}
+	*/
 
 
 	return 0;
