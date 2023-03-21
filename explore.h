@@ -4,6 +4,28 @@
 #include <string>
 #include <vector>
 
+class treasure{
+	
+	private:
+		std::string name;
+		std::string desc;
+
+	public:
+		treasure(string name = "blank!", string desc = "blank!"){
+			this->name = name;
+			this->desc = desc;
+		}
+
+	std::string get_name(){
+		return name;
+	}
+
+	std::string get_desc(){
+		return desc;
+	}
+
+
+};
 
 class edge{
 
@@ -43,6 +65,9 @@ class room{
 		
 	std::vector<edge> doors;
 	
+	int get_door_id(int index){
+		return doors[index].get_other_node(id);
+	}	
 
 };
  
