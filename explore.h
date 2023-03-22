@@ -1,5 +1,5 @@
-#ifndef explore.h
-#define explore.h
+#ifndef explore
+#define explore
 
 #include <string>
 #include <vector>
@@ -11,8 +11,8 @@ class treasure{
 		std::string desc;
 
 	public:
-		treasure(string name = "blank!", string desc = "blank!"){
-			this->name = name;
+		treasure(std::string _name = "blank!",std::string desc = "blank!"){
+			this->name = _name;
 			this->desc = desc;
 		}
 
@@ -64,7 +64,8 @@ class room{
 	int y;
 	int w;
 	int h;
-
+	
+	bool visible = false;
 	
 	int id;	
 		
@@ -75,6 +76,4 @@ class room{
 	}	
 
 };
- 
-
 #endif

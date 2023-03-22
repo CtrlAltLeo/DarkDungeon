@@ -6,8 +6,8 @@
 #include <fstream>
 
 /* TODO
-	-render rooms
-	-rooms shouldn't multi-connect :P
+	-description UI shouldn't cover map. FIX 	
+	-rooms shouldn't multi-connect or overlap 
 	
 	-add combat
 	
@@ -18,6 +18,8 @@
 */
 
 using namespace std;
+
+
 
 void add_room(vector<room> & rooms, string desc, string door_desc = "AA", int x=0, int y=0, int h=0, int w = 0){
 
@@ -49,18 +51,23 @@ void connect_rooms(vector<room> & rooms, int id_1, int id_2){
 
 }
 
-void print_desc(vector<room> & rooms, int id){
+string print_desc(vector<room> & rooms, int id){
 
-	cout << "ID: " << id << endl;
+	string room_desc = "";
 
-	cout << rooms[id].desc << endl;
+	room_desc = room_desc + rooms[id].desc;
 	
-
+	
 	int opt = 0;	
 	for (edge door: rooms[id].doors){
-		cout << "DOOR " <<opt << rooms[door.get_other_node(id)].door_desc << endl; 
+	//	cout << "DOOR " <<opt << rooms[door.get_other_node(id)].door_desc << endl; 
+		room_desc = room_desc + "\n" + rooms[door.get_other_node(id)].door_desc;
 		opt += 1;	
 	}
+
+	rooms[id].visible = true;
+
+	return room_desc;
 	
 }
 
@@ -125,7 +132,7 @@ void generate_dungeon(vector<room> &rooms){
 
 	for (int i = 0; i < room_count; i++){
 		
-		add_room(rooms, descs[rand() % descs.size()], doors[rand() % doors.size()], rand()%SCREEN_X, rand()%SCREEN_Y,5,5);
+		add_room(rooms, descs[rand() % (descs.size()-1)], doors[rand() % (doors.size()-1)], rand()%SCREEN_X-5, rand()%SCREEN_Y-5,5,5);
 	}
 	
 	for (auto i : rooms){
@@ -148,7 +155,15 @@ void generate_dungeon(vector<room> &rooms){
 
 	}	
 		
+}
 
+void draw_visible_rooms(display_screen &d, vector<room> &rooms){
+
+	for (room r : rooms){
+		if (r.visible){
+			d.rect_fill(r.x,r.y,r.x+r.w,r.y+r.h,'.');
+		}
+	}
 
 }
 
@@ -160,34 +175,34 @@ int main(){
 	int active_room = 0;
 	
 	generate_dungeon(ROOMS);	
-	
-		
+
+
 
 	display_screen d;
-
-	d.cls();
-
-	char art[6] = {'@','$','%','&','^','.'};
-
-	for (room R: ROOMS){
 		
-		d.rect_fill(R.x, R.y, R.x + R.w, R.y+R.h, art[rand()%6]);
-	}
 
-
-	d.draw();
-
-	/*	
 	while(true){
-		print_desc(ROOMS, active_room);
+		
+		d.cls();
+
+		string room_desc = print_desc(ROOMS, active_room);
+
+		room r = ROOMS[active_room];
+
+		draw_visible_rooms(d, ROOMS);	
+	
+		d.set_char(r.x + floor(.5*r.w), r.y + floor(.5*r.h), 'P');
+		
+//		d.rect_fill(0,25,SCREEN_X,SCREEN_Y,'.');
+//		d.print_bounds(1,25,SCREEN_X-1,SCREEN_Y-1, room_desc);
+		d.print(0,0, to_string( r.doors.size()) );	
+		d.draw();	
 
 		int in = get_number(0,5);
 
 		active_room = ROOMS[active_room].get_door_id(in);	
-
+		
 	}
-	*/
-
 
 	return 0;
 }
