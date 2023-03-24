@@ -28,7 +28,7 @@ class treasure{
 };
 
 class edge{
-
+	//These are Room IDs
 	int node1;
 	int node2;
 		
@@ -39,7 +39,7 @@ class edge{
 		this->node2 = node2;
 
 	}	
-
+	//me is the room ID
 	int get_other_node(int me){
 		
 		if (node1 == me){
@@ -52,6 +52,14 @@ class edge{
 
 	}		
 
+	bool has_id(int me){
+		if (node1 == me or node2 == me){
+			return true;
+		} else {
+			return false;
+		}		
+	}
+
 };
 
 
@@ -60,6 +68,7 @@ class room{
 	std::string desc;
 	std::string door_desc;	
 
+	//room graphical positions
 	int x;
 	int y;
 	int w;
@@ -76,4 +85,6 @@ class room{
 	}	
 
 };
+
+
 #endif

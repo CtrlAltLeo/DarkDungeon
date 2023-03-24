@@ -6,12 +6,13 @@
 #include <fstream>
 
 /* TODO
-	-description UI shouldn't cover map. FIX 	
+
 	-rooms shouldn't multi-connect or overlap 
+		-maybe do a check after generation to clean up door duplicates
 	
 	-add combat
 	
-	-add character
+	-add character skills and HP
 
 	-very rough NPC stuff
 
@@ -30,14 +31,11 @@ void add_room(vector<room> & rooms, string desc, string door_desc = "AA", int x=
 	R.h = h;
 	R.w = w;
 
-
 	R.id = rooms.size();
 	R.desc = desc;	
 	R.door_desc = door_desc;
 	
 	rooms.push_back(R);
-
-	
 
 }
 
@@ -48,20 +46,19 @@ void connect_rooms(vector<room> & rooms, int id_1, int id_2){
 	rooms[id_1].doors.push_back(door);
 	rooms[id_2].doors.push_back(door);
 	
-
 }
 
 string print_desc(vector<room> & rooms, int id){
 
 	string room_desc = "";
 
-	room_desc = room_desc + rooms[id].desc;
+	room_desc = room_desc + rooms[id].desc + "\n";
 	
 	
 	int opt = 0;	
 	for (edge door: rooms[id].doors){
 	//	cout << "DOOR " <<opt << rooms[door.get_other_node(id)].door_desc << endl; 
-		room_desc = room_desc + "\n" + rooms[door.get_other_node(id)].door_desc;
+		room_desc = room_desc + " (" + to_string(opt) + ") "+rooms[door.get_other_node(id)].door_desc ;
 		opt += 1;	
 	}
 
@@ -132,39 +129,76 @@ void generate_dungeon(vector<room> &rooms){
 
 	for (int i = 0; i < room_count; i++){
 		
-		add_room(rooms, descs[rand() % (descs.size()-1)], doors[rand() % (doors.size()-1)], rand()%SCREEN_X-5, rand()%SCREEN_Y-5,5,5);
+		add_room(rooms, descs[rand() % (descs.size()-1)], doors[rand() % (doors.size()-1)],(rand()%35)+5, (rand()%10)+5, 2,2);
 	}
+
+	//connect rooms	
 	
 	for (auto i : rooms){
 		
 		int current_room = i.id;
 
-		int connections = rand() % 3;
-		
+		int connections = (rand() % 2)+1;
+	
+
+			
 
 		for (int i = 0; i < connections; i++){
-			
-			int connect;
+		
+			int connect = rand() % rooms.size();					
+		
 			do {
 				connect = rand() % rooms.size();
-						
-			} while (current_room == connect);	
+			} while(connect == current_room);
+		
+			for (edge door : rooms[connect].doors){
+				if (door.has_id(current_room)){
+					continue;
+					//connect = rand() % rooms.size();	
+				}
+			}	
+	
+			if (rooms[connect].doors.size() > 3){
+				break;
+			}			
 
 			connect_rooms(rooms, current_room, connect);	
 		}
 
 	}	
-		
+	
+	rooms[0].visible = true;		
 }
 
-void draw_visible_rooms(display_screen &d, vector<room> &rooms){
 
-	for (room r : rooms){
-		if (r.visible){
-			d.rect_fill(r.x,r.y,r.x+r.w,r.y+r.h,'.');
+void draw_map(display_screen &d,const vector<room> &rooms,const int active_room){
+	
+	d.rect(1,1,SCREEN_X/1.5,SCREEN_Y/1.5,'#');
+	
+	for (room r: rooms){
+
+		char texture = '.';
+
+		if (r.id == active_room){
+			texture = '@';
 		}
-	}
+		
+		if (r.visible == false){
+			texture = ' ';
+		}
 
+		d.rect_fill(r.x, r.y, r.x+r.w, r.y+r.h, texture);
+	}
+	
+}
+
+void draw_text(display_screen &d, vector<room> &rooms, int &active_room){
+
+	string desc = print_desc(rooms, active_room);
+
+	d.rect(1, SCREEN_Y/1.5, SCREEN_X, SCREEN_Y, '=');	
+	d.print_bounds(2,(SCREEN_Y/1.5)+1,SCREEN_X, SCREEN_Y, desc); 
+	
 }
 
 int main(){
@@ -179,29 +213,29 @@ int main(){
 
 
 	display_screen d;
-		
 
 	while(true){
 		
 		d.cls();
 
-		string room_desc = print_desc(ROOMS, active_room);
-
-		room r = ROOMS[active_room];
-
-		draw_visible_rooms(d, ROOMS);	
 	
-		d.set_char(r.x + floor(.5*r.w), r.y + floor(.5*r.h), 'P');
-		
-//		d.rect_fill(0,25,SCREEN_X,SCREEN_Y,'.');
-//		d.print_bounds(1,25,SCREEN_X-1,SCREEN_Y-1, room_desc);
-		d.print(0,0, to_string( r.doors.size()) );	
-		d.draw();	
+	//map
+	  draw_map(d, ROOMS, active_room);
 
+	//character stats
+//	d.rect(SCREEN_X/1.5,1,SCREEN_X,SCREEN_Y/1.5,'$');
+  	
+		draw_text(d, ROOMS, active_room);
+
+		d.print(0,0,to_string( ROOMS.size() )  );
+	
+   	d.draw();		
 		int in = get_number(0,5);
 
 		active_room = ROOMS[active_room].get_door_id(in);	
-		
+		ROOMS[active_room].visible = true;	
+
+
 	}
 
 	return 0;
