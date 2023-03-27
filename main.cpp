@@ -106,7 +106,7 @@ int get_player_action(){
 
 void generate_dungeon(vector<room> &rooms){
 	
-	int room_count = rand() % 10+5;
+	int room_count = (rand() % 10)+6;
 	
 	vector<string> descs;	
 	vector<string> doors;
@@ -152,10 +152,9 @@ void generate_dungeon(vector<room> &rooms){
 			} while(connect == current_room);
 		
 			for (edge door : rooms[connect].doors){
-				if (door.has_id(current_room)){
-					continue;
-					//connect = rand() % rooms.size();	
-				}
+				if (door.checksum == (current_room * connect)){
+					break;
+				}	
 			}	
 	
 			if (rooms[connect].doors.size() > 3){
@@ -165,7 +164,8 @@ void generate_dungeon(vector<room> &rooms){
 			connect_rooms(rooms, current_room, connect);	
 		}
 
-	}	
+	}
+
 	
 	rooms[0].visible = true;		
 }

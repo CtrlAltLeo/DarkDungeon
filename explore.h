@@ -31,14 +31,18 @@ class edge{
 	//These are Room IDs
 	int node1;
 	int node2;
+
 		
 	public:	
 	
+	int checksum;
+
 	edge(int node1, int node2){
 		this->node1 = node1;
 		this->node2 = node2;
-
+		checksum = node1 * node2;
 	}	
+
 	//me is the room ID
 	int get_other_node(int me){
 		
@@ -83,6 +87,7 @@ class room{
 	int get_door_id(int index){
 		return doors[index].get_other_node(id);
 	}	
+
 
 };
 
