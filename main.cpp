@@ -6,10 +6,13 @@
 #include <fstream>
 
 /* TODO
-
-	-rooms shouldn't multi-connect or overlap 
-		-maybe do a check after generation to clean up door duplicates
 	
+	-action context menu
+		move to other room
+		attack monster
+		talk to npc
+			
+		
 	-add combat
 	
 	-add character skills and HP
