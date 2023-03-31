@@ -1,5 +1,7 @@
 #include "graphics.h"
 #include "explore.h"
+#include "character.h"
+
 #include <unistd.h>
 #include <string>
 #include <vector>
@@ -57,13 +59,14 @@ string print_desc(vector<room> & rooms, int id){
 
 	room_desc = room_desc + rooms[id].desc + "\n";
 	
-	
+	/*
 	int opt = 0;	
 	for (edge door: rooms[id].doors){
 	//	cout << "DOOR " <<opt << rooms[door.get_other_node(id)].door_desc << endl; 
 		room_desc = room_desc + " (" + to_string(opt) + ") "+rooms[door.get_other_node(id)].door_desc ;
 		opt += 1;	
 	}
+	*/
 
 	rooms[id].visible = true;
 
@@ -91,21 +94,6 @@ int get_number(int low, int high){
 
 }
 
-int get_player_action(){
-
-	int act = get_number(1,3);
-	cout << "Look (1) \n Go through door (2) \n Take item (3) \n" << endl;
-
-	while (act > 3 or act < 1){
-	int act = get_number(1,3);
-	cout << "Look (1) \n Go through door (2) \n Take item (3) \n" << endl;
-
-
-	}	
-
-	return act;	
-
-}
 
 void generate_dungeon(vector<room> &rooms){
 	
@@ -204,14 +192,45 @@ void draw_text(display_screen &d, vector<room> &rooms, int &active_room){
 	
 }
 
+//gives the player hints for available actions
+string print_actions(const vector<room> &rooms, int active_room){
+
+	string response = "";	
+
+	room R = rooms[active_room];
+
+	if (R.has_npc){
+
+	} else {
+		response = response + "There is no one in the room. ";
+	}
+
+	if (R.has_monster){
+
+	} else {
+		response = response + "There are no monsters in the room. ";
+	}
+
+	return response;
+
+}
+
+
 int main(){
 	
 	srand(time(NULL));
 
 	vector<room> ROOMS;
 	int active_room = 0;
+
+	
 	
 	generate_dungeon(ROOMS);	
+
+	character player("Leo", 10, 10, 10);
+
+	
+
 
 
 
@@ -228,18 +247,20 @@ int main(){
 	//character stats
 //	d.rect(SCREEN_X/1.5,1,SCREEN_X,SCREEN_Y/1.5,'$');
   	
-		draw_text(d, ROOMS, active_room);
+	draw_text(d, ROOMS, active_room);
 
-		d.print(0,0,to_string( ROOMS.size() )  );
-	
-   	d.draw();		
-		int in = get_number(0,5);
+	d.print(0,0,to_string( ROOMS.size() )  );
 
-		active_room = ROOMS[active_room].get_door_id(in);	
-		ROOMS[active_room].visible = true;	
+	d.draw();		
+	int in = get_number(0,5);
+
+	active_room = ROOMS[active_room].get_door_id(in);	
+	ROOMS[active_room].visible = true;	
 
 
 	}
+
+
 
 	return 0;
 }

@@ -33,9 +33,10 @@ class edge{
 	int node2;
 
 		
-	public:	
+	public:
 	
-	int checksum;
+
+		int checksum;
 
 	edge(int node1, int node2){
 		this->node1 = node1;
@@ -71,6 +72,13 @@ class room{
 	public:	
 	std::string desc;
 	std::string door_desc;	
+
+
+
+//This will be replaced 
+	bool has_monster = false;		
+	bool has_npc = false;
+	
 
 	//room graphical positions
 	int x;
