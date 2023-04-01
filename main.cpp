@@ -25,6 +25,7 @@
 
 using namespace std;
 
+string print_actions(const vector<room> &rooms, int active_room);
 
 
 void add_room(vector<room> & rooms, string desc, string door_desc = "AA", int x=0, int y=0, int h=0, int w = 0){
@@ -59,14 +60,16 @@ string print_desc(vector<room> & rooms, int id){
 
 	room_desc = room_desc + rooms[id].desc + "\n";
 	
-	/*
+	room_desc = room_desc + print_actions(rooms, id);
+	
+	
 	int opt = 0;	
 	for (edge door: rooms[id].doors){
 	//	cout << "DOOR " <<opt << rooms[door.get_other_node(id)].door_desc << endl; 
 		room_desc = room_desc + " (" + to_string(opt) + ") "+rooms[door.get_other_node(id)].door_desc ;
 		opt += 1;	
 	}
-	*/
+	
 
 	rooms[id].visible = true;
 
@@ -227,7 +230,7 @@ int main(){
 	
 	generate_dungeon(ROOMS);	
 
-	character player("Leo", 10, 10, 10);
+	//character player("Leo", 10, 10, 10);
 
 	
 
