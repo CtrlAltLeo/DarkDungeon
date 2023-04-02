@@ -70,10 +70,23 @@ class edge{
 
 class room{
 	public:	
+
+	room(){
+
+		if (rand() % 10 > 7){
+	
+			NPC *FELLA = new NPC;	
+			guy = FELLA;	
+			has_npc = true;	
+		};
+	
+
+	}
+
 	std::string desc;
 	std::string door_desc;	
 
-
+	NPC *guy = 0;
 
 //This will be replaced 
 	bool has_monster = false;		
