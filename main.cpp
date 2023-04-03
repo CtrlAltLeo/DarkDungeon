@@ -31,6 +31,8 @@ string print_actions(const vector<room> &rooms, int active_room);
 
 int active_room; 
 vector<room> ROOMS;
+
+int game_running = true;
  
 void add_room(vector<room> & rooms, string desc, string door_desc = "AA", int x=0, int y=0, int h=0, int w = 0){
 
@@ -241,12 +243,23 @@ void draw_character(display_screen &d , character &c){
 		d.rect(x,1,SCREEN_X,y,'$');
 	
 		d.print_bounds(x+3,3,x+15,y,c.get_stats());
-			
-				
-
-
 }
 
+void check_lose(character &c){
+
+	if (c.get_hp() <= 0 || c.get_sanity() <= 0){
+		game_running = false;
+
+		display_screen d;
+		
+		d.cls();
+		d.ascii_image(SCREEN_X/3,0,"Art/skull");
+		d.ascii_image(7, SCREEN_Y-7, "Art/death");
+		d.draw();	
+
+	}
+
+}
 
 
 
@@ -254,39 +267,33 @@ int main(){
 	
 	srand(time(NULL));
 
-	//vector<room> ROOMS;
 	active_room = 0;
-
 	
 	generate_dungeon(ROOMS);	
 
-	//character player("Leo", 10, 10, 10, 10);
-	
 	character player = make_character();
 	
 
 	display_screen d;
 
-	while(true){
+	while(game_running){
 		
 		d.cls();
 
-	
-	//map
 	  draw_map(d, ROOMS, active_room);
 
 		draw_character(d, player);
   	
 		draw_text(d, ROOMS, active_room);
 
-
-		//d.print(0,0,to_string( ROOMS.size()) );
+	
 
 		d.draw();		
 
-		action_process();	
+		action_process();
+
+		check_lose(player);	
 	
-		player.damage(10);
 	
 	}
 

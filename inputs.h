@@ -34,6 +34,20 @@ int get_number(int low, int high){
 
 }
 
+bool get_bool(std::string question){
+
+	cout << question << " (y/n)" << endl;
+	
+	string in;
+	getline(cin, in);
+
+	if (in[0] == 'y'){
+		return true;
+	}else{
+		return false;
+	}
+	
+}
 
 
 #endif
