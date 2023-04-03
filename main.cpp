@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "inputs.h"
 #include "npc.h"
 #include "explore.h"
 #include "character.h"
@@ -28,7 +29,9 @@ using namespace std;
 
 string print_actions(const vector<room> &rooms, int active_room);
 
-
+int active_room; 
+vector<room> ROOMS;
+ 
 void add_room(vector<room> & rooms, string desc, string door_desc = "AA", int x=0, int y=0, int h=0, int w = 0){
 
 	room R;
@@ -104,41 +107,34 @@ string print_actions(const vector<room> &rooms, int active_room){
 }
 
 
-int get_number(int low, int high){
-		
-	int in = -1;
-		
-	do {
-		cout << "Input a number between " << low << " and " << high << endl;
-		cin >> in;
-				
-	} while( in > high or in < low);
-	
-	return in;	
-
-}
-
-string get_player_action(){
-
-	string in;
-	getline(cin, in);
-
-	string valid[3] = {"door", "talk", "fight"};
-
-	for (string s: valid){
-		if (in == s){
-			return in;
-		}
-	}
-
-	return "FALSE";
-
-}
 
 void action_process(){
 
+	cout << "enter an action. (type help for help!)" << endl;
+	
+	string act = get_player_action();
+
+	room R = ROOMS[active_room];
+
+	if (act == "door"){
+
+		int in = get_number(0, R.doors.size()-1);	
+		
+		active_room = R.get_door_id(in);
+
+	} else if (act == "help"){
+		
+		cout << "try door, fight, talk or help." << endl;		
+		sleep(3);
+	} else if (act == "talk"){
+	
+		npc_talk(*R.guy);
+	
+	}	
 
 }
+
+
 
 void generate_dungeon(vector<room> &rooms){
 	
@@ -237,6 +233,20 @@ void draw_text(display_screen &d, vector<room> &rooms, int &active_room){
 	
 }
 
+void draw_character(display_screen &d , character &c){
+
+		int x = SCREEN_X/1.5;
+		int y = SCREEN_Y/1.5;
+
+		d.rect(x,1,SCREEN_X,y,'$');
+	
+		d.print_bounds(x+3,3,x+15,y,c.get_stats());
+			
+				
+
+
+}
+
 
 
 
@@ -244,14 +254,15 @@ int main(){
 	
 	srand(time(NULL));
 
-	vector<room> ROOMS;
-	int active_room = 0;
+	//vector<room> ROOMS;
+	active_room = 0;
 
 	
 	generate_dungeon(ROOMS);	
 
-	//character player("Leo", 10, 10, 10);
-
+	//character player("Leo", 10, 10, 10, 10);
+	
+	character player = make_character();
 	
 
 	display_screen d;
@@ -264,20 +275,19 @@ int main(){
 	//map
 	  draw_map(d, ROOMS, active_room);
 
-	//character stats
-	d.rect(SCREEN_X/1.5,1,SCREEN_X,SCREEN_Y/1.5,'$');
+		draw_character(d, player);
   	
-	draw_text(d, ROOMS, active_room);
+		draw_text(d, ROOMS, active_room);
 
-	d.print(0,0,to_string( ROOMS.size() )  );
 
-	d.draw();		
+		//d.print(0,0,to_string( ROOMS.size()) );
+
+		d.draw();		
+
+		action_process();	
 	
-	int in = get_number(0,5);
-
-	active_room = ROOMS[active_room].get_door_id(in);	
-	ROOMS[active_room].visible = true;	
-
+		player.damage(10);
+	
 	}
 
 

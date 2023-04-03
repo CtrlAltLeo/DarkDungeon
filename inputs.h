@@ -1,0 +1,39 @@
+#ifndef INPUTS
+#define INPUTS
+
+#include <string>
+
+std::string get_player_action(){
+
+  std::string in;
+  getline(cin, in);
+
+  std::string valid[4] = {"door", "talk", "fight", "help"};
+
+  for (std::string s: valid){
+    if (in == s){
+      return in;
+    }
+  }
+
+  return "FALSE";
+
+}
+
+int get_number(int low, int high){
+
+  int in = -1;
+
+  do {
+    cout << "Input a number between " << low << " and " << high << endl;
+    cin >> in;
+
+  } while( in > high or in < low);
+
+  return in;
+
+}
+
+
+
+#endif
