@@ -2,6 +2,8 @@
 #define CHARACTER
 
 #include <string>
+#include <iostream>
+#include "inputs.h"
 
 class character{
 	
@@ -98,8 +100,8 @@ character make_character(){
 	int mag = 10;
 	int san = 10;
 	
-	cout << "Enter your character's name" << endl;
-	getline(cin, name);
+	std::cout << "Enter your character's name" << std::endl;
+	getline(std::cin, name);
 
 	bool str_mag = get_bool("Do you usually let your sword do the talking?");
 	bool mag_san = get_bool("Are you afraid of forbidden knowledge?");

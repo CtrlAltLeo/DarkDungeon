@@ -121,22 +121,31 @@ void action_process(){
 	
 	string act = get_player_action();
 
-	room R = ROOMS[active_room];
+	room *R = &ROOMS[active_room];
 
 	if (act == "door"){
 
-		int in = get_number(0, R.doors.size()-1);	
+		int in = get_number(0, R->doors.size()-1);	
 	
 		last_room = active_room;	
-		active_room = R.get_door_id(in);
+		active_room = R->get_door_id(in);
 
 	} else if (act == "help"){
 		
 		cout << "try door, fight, talk, last, or help." << endl;		
 		sleep(3);
 	} else if (act == "talk"){
-	
-		npc_talk(*R.guy, pPlayer);
+		
+		if (R->has_npc){
+
+			npc_talk(R->guy, pPlayer);
+			R->remove_npc();
+
+		} else {
+			cout << "There's no one in the room" << endl;
+			sleep(1);	
+		}		
+
 	
 	} else if (act == "last"){
 		active_room = last_room;
@@ -295,10 +304,12 @@ int main(){
 		draw_character(d, player);
   	
 		draw_text(d, ROOMS, active_room);
+		
 
 		d.draw();		
 
 		action_process();
+
 
 		check_lose(player);	
 	

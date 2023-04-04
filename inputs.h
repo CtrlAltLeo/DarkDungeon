@@ -1,12 +1,13 @@
 #ifndef INPUTS
 #define INPUTS
 
-#include <string>
+//#include <string>
+//#include <iostream>
 
 std::string get_player_action(){
 
   std::string in;
-  getline(cin, in);
+  getline(std::cin, in);
 
   std::string valid[5] = {"door", "talk", "fight", "help", "last"};
 

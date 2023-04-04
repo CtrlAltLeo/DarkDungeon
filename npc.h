@@ -11,7 +11,7 @@ class NPC {
 		
 		static const string name_list[30]; 
 
-
+	
 
 	public:
 
@@ -21,16 +21,22 @@ class NPC {
 
 		}
 		
+		~NPC(){
+			
+		 }
+		
 		std::string name;
 		
 		void remove(){
-
+			talked_to = true;
 		}				
+	
+		bool talked_to = false;
 	
 
 };
 
-const string NPC::name_list[30] = {"Jeanin the Mild","Bertrannus the Bane","Wymund the Poor","Nicolas the Reckless","Howard the Warm","Pierce the Selfish","Geronimus the Muscle","Miles the Mild","Ansellus the Hungry","Sewal the Allegiant","Guibe of the Dawn","Mainard the Dragonslayer","Nycolas the Brute","Reinfridus the Escort","Jehanel the Young","Alein the Warm","Doran the Dragonheart","Reinold the Resolute","Adkin the Swift","Lovell the Valiant","Bobbie of the Winter","Guillemot the Mighty","Talebot the Patrol","Federyc the Lionheart","Rotbert the Courteous","Seemannus the Harbinger","Abel the Resilient","Artheur the Yellow","Normann the Whisper","Averitt the Rich"};
+const std::string NPC::name_list[30] = {"Jeanin the Mild","Bertrannus the Bane","Wymund the Poor","Nicolas the Reckless","Howard the Warm","Pierce the Selfish","Geronimus the Muscle","Miles the Mild","Ansellus the Hungry","Sewal the Allegiant","Guibe of the Dawn","Mainard the Dragonslayer","Nycolas the Brute","Reinfridus the Escort","Jehanel the Young","Alein the Warm","Doran the Dragonheart","Reinold the Resolute","Adkin the Swift","Lovell the Valiant","Bobbie of the Winter","Guillemot the Mighty","Talebot the Patrol","Federyc the Lionheart","Rotbert the Courteous","Seemannus the Harbinger","Abel the Resilient","Artheur the Yellow","Normann the Whisper","Averitt the Rich"};
 
 
 
@@ -42,10 +48,31 @@ class dialoge_option{
 			
 			effect_type = rand() % 4;
 			effect_multiplier = (rand() % 3) + 1;
+			
+			switch (effect_type){
 
+				case 0:
+					text = "I have something shiny for you..";
+					break;
+				case 1:
+					text = "Let me help with that wound..";
+					break;
+				case 2:
+					text = "This knife might come in handy..";
+					break;
+				case 3:
+					text = "Listen to my words..";
+					break;
+				default:
+					text = "AMONG US";
+					break;
+			}
+			
 		}
 
 		std::string text = "This is a sample text";
+		
+		
 	
 		enum effect {GOLD, HEALTH, DAMAGE, SANITY};
 
@@ -78,7 +105,7 @@ class dialoge_option{
 
 
 
-void npc_talk(NPC person, character *player){
+void npc_talk(NPC *person, character *player){
 
 	bool talking = true;
 
@@ -88,24 +115,28 @@ void npc_talk(NPC person, character *player){
 
 		screen.cls();
 
-		screen.print(0,0, person.name);	
-
+		screen.print(0,0, person->name);	
+	
+		vector<dialoge_option> dialoges;
+		for (int i = 0; i<3; i++){
+			dialoge_option o;
+			dialoges.push_back(o);
+			
+			screen.print(2, (3*i)+ 2, to_string((i+1)) + o.text);
+		}
 		
-		dialoge_option d;
-
-		screen.print(2,2, d.text);
-
-		screen.print(2,3, std::to_string(d.effect_type));
+		screen.print(2, 10, "(4) Do Nothing");
 	
 		screen.draw();
-
-		if (get_bool("Do you want the effect?")){
-			d.apply_effect(player);
-		}	
 	
+		int opt = get_number(1,4);	
+
+		if (opt > 0 && opt < 4){
+			dialoges[opt-1].apply_effect(player);
+		}	
+
 		talking = false;	
 
-	
 
 	}
 

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "npc.h"
 
 class treasure{
 	
@@ -73,10 +74,9 @@ class room{
 
 	room(){
 
-		if (true){//(rand() % 10 > 7){
+		if (rand() % 10 > 7){
 	
-			NPC *FELLA = new NPC;	
-			guy = FELLA;	
+			guy = new NPC;
 			has_npc = true;	
 		};
 	
@@ -108,7 +108,12 @@ class room{
 	int get_door_id(int index){
 		return doors[index].get_other_node(id);
 	}	
-
+	
+	void remove_npc(){
+		delete guy;
+		guy = 0;
+		has_npc = false;
+	}
 
 };
 
