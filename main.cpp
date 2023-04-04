@@ -12,10 +12,10 @@
 /* TODO
 	
 	-action context menu
-		move to other room
 		attack monster
 		talk to npc
-			
+		last command, sends you to last room			
+
 		
 	-add combat
 	
@@ -30,9 +30,14 @@ using namespace std;
 string print_actions(const vector<room> &rooms, int active_room);
 
 int active_room; 
+int last_room;
 vector<room> ROOMS;
 
 int game_running = true;
+
+character *pPlayer = 0;
+
+
  
 void add_room(vector<room> & rooms, string desc, string door_desc = "AA", int x=0, int y=0, int h=0, int w = 0){
 
@@ -121,17 +126,20 @@ void action_process(){
 	if (act == "door"){
 
 		int in = get_number(0, R.doors.size()-1);	
-		
+	
+		last_room = active_room;	
 		active_room = R.get_door_id(in);
 
 	} else if (act == "help"){
 		
-		cout << "try door, fight, talk or help." << endl;		
+		cout << "try door, fight, talk, last, or help." << endl;		
 		sleep(3);
 	} else if (act == "talk"){
 	
-		npc_talk(*R.guy);
+		npc_talk(*R.guy, pPlayer);
 	
+	} else if (act == "last"){
+		active_room = last_room;
 	}	
 
 }
@@ -268,11 +276,13 @@ int main(){
 	srand(time(NULL));
 
 	active_room = 0;
+	last_room = 0;
 	
 	generate_dungeon(ROOMS);	
 
 	character player = make_character();
-	
+
+	pPlayer = &player;	
 
 	display_screen d;
 
@@ -286,14 +296,11 @@ int main(){
   	
 		draw_text(d, ROOMS, active_room);
 
-	
-
 		d.draw();		
 
 		action_process();
 
 		check_lose(player);	
-	
 	
 	}
 

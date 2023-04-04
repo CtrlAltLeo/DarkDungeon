@@ -54,9 +54,18 @@ class character{
 			player_stats += "Strength: " + std::to_string(STR) + end;
 			player_stats += "Magic: " + std::to_string(MAG) + end;
 			player_stats += "Sanity: " + std::to_string(SAN) + end;
+			player_stats += "Gold Pieces: " + std::to_string(gold) + end;
 			
 			return player_stats;
 		}	
+
+		void add_gold(int g){
+			gold += g;
+		}
+
+		int get_gold(){
+			return gold;
+		}
 		
 				
 
@@ -68,7 +77,7 @@ class character{
 		int MAG; //Magic
 		int SAN; //Sanity	
 		int HP; //hit points
-			
+		int gold = 0;			
 			
 
 
