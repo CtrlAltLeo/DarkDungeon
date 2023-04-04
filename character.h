@@ -40,6 +40,14 @@ class character{
 			HP -= hp;
 		}
 		
+		void change_san(int san){
+			SAN += san;
+		}
+		
+		int get_san(){
+			return SAN;
+		}
+		
 	
 		std::string get_stats(){
 			

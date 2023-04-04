@@ -73,7 +73,7 @@ class room{
 
 	room(){
 
-		if (rand() % 10 > 7){
+		if (true){//(rand() % 10 > 7){
 	
 			NPC *FELLA = new NPC;	
 			guy = FELLA;	
