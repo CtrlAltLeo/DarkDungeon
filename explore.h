@@ -80,6 +80,10 @@ class room{
 			has_npc = true;	
 		};
 	
+		if (rand() % 10 > 4){
+			has_monster = true;
+		}		
+
 
 	}
 

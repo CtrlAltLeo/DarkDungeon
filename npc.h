@@ -122,7 +122,7 @@ void npc_talk(NPC *person, character *player){
 			dialoge_option o;
 			dialoges.push_back(o);
 			
-			screen.print(2, (3*i)+ 2, to_string((i+1)) + o.text);
+			screen.print(2, (3*i)+ 2, to_string((i+1)) +" " + o.text);
 		}
 		
 		screen.print(2, 10, "(4) Do Nothing");

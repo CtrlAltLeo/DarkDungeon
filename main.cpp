@@ -3,6 +3,8 @@
 #include "npc.h"
 #include "explore.h"
 #include "character.h"
+#include "combat.h"
+
 
 #include <unistd.h>
 #include <string>
@@ -13,15 +15,9 @@
 	
 	-action context menu
 		attack monster
-		talk to npc
-		last command, sends you to last room			
 
 		
 	-add combat
-	
-	-add character skills and HP
-
-	-very rough NPC stuff
 
 */
 
@@ -104,7 +100,7 @@ string print_actions(const vector<room> &rooms, int active_room){
 	}
 
 	if (R.has_monster){
-
+		response = response + "There is a monster in here! ";
 	} else {
 		response = response + "There are no monsters in the room. ";
 	}
@@ -278,9 +274,24 @@ void check_lose(character &c){
 
 }
 
+void check_combat(character *player){
 
+	if (ROOMS[active_room].has_monster){
+
+		orc ORC;
+		do_combat(player, &ORC);
+		
+		ROOMS[active_room].has_monster = false;
+
+	}
+
+}
 
 int main(){
+
+
+
+	
 	
 	srand(time(NULL));
 
@@ -289,9 +300,13 @@ int main(){
 	
 	generate_dungeon(ROOMS);	
 
+	ROOMS[active_room].has_monster = false;
+
 	character player = make_character();
 
 	pPlayer = &player;	
+	
+
 
 	display_screen d;
 
@@ -304,13 +319,14 @@ int main(){
 		draw_character(d, player);
   	
 		draw_text(d, ROOMS, active_room);
-		
+
 
 		d.draw();		
 
 		action_process();
 
-
+		check_combat(pPlayer);
+		
 		check_lose(player);	
 	
 	}
