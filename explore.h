@@ -35,7 +35,8 @@ class edge{
 
 		
 	public:
-	
+
+		bool used = false;	
 
 		int checksum;
 
@@ -95,7 +96,7 @@ class room{
 //This will be replaced 
 	bool has_monster = false;		
 	bool has_npc = false;
-	
+	bool has_stairs = false;	
 
 	//room graphical positions
 	int x;

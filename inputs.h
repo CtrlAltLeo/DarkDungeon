@@ -9,7 +9,7 @@ std::string get_player_action(){
   std::string in;
   getline(std::cin, in);
 
-  std::string valid[5] = {"door", "talk", "fight", "help", "last"};
+  std::string valid[6] = {"door", "talk", "fight", "help", "last", "stairs"};
 
   for (std::string s: valid){
     if (in == s){

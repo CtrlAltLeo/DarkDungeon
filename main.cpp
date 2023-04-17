@@ -13,17 +13,14 @@
 
 /* TODO
 	
-	-action context menu
-		attack monster
-
-		
-	-add combat
+	you know what doors you've used	
 
 */
 
 using namespace std;
 
 string print_actions(const vector<room> &rooms, int active_room);
+void next_level();
 
 int active_room; 
 int last_room;
@@ -33,7 +30,7 @@ int game_running = true;
 
 character *pPlayer = 0;
 
-
+int dungeon_lvl = 0;
  
 void add_room(vector<room> & rooms, string desc, string door_desc = "AA", int x=0, int y=0, int h=0, int w = 0){
 
@@ -72,8 +69,14 @@ string print_desc(vector<room> & rooms, int id){
 	
 	int opt = 0;	
 	for (edge door: rooms[id].doors){
-	//	cout << "DOOR " <<opt << rooms[door.get_other_node(id)].door_desc << endl; 
-		room_desc = room_desc + " (" + to_string(opt) + ") "+rooms[door.get_other_node(id)].door_desc ;
+
+		string add = ") ";
+		
+		if (door.used){
+			add = "*) ";
+		}
+
+		room_desc = room_desc + " (" + to_string(opt) + add +rooms[door.get_other_node(id)].door_desc ;
 		opt += 1;	
 	}
 	
@@ -105,6 +108,10 @@ string print_actions(const vector<room> &rooms, int active_room){
 		response = response + "There are no monsters in the room. ";
 	}
 
+	if (R.has_stairs){
+		response = response + "There are stairs leading to a lower level here! ";
+	}
+
 	return response;
 
 }
@@ -125,6 +132,8 @@ void action_process(){
 	
 		last_room = active_room;	
 		active_room = R->get_door_id(in);
+		R->doors[in].used = true;
+
 
 	} else if (act == "help"){
 		
@@ -145,6 +154,8 @@ void action_process(){
 	
 	} else if (act == "last"){
 		active_room = last_room;
+	} else if (act == "stairs" && R->has_stairs){
+		next_level();		
 	}	
 
 }
@@ -180,6 +191,8 @@ void generate_dungeon(vector<room> &rooms){
 	}
 
 	//connect rooms	
+
+	rooms.back().has_stairs = true;	
 	
 	for (auto i : rooms){
 		
@@ -218,9 +231,42 @@ void generate_dungeon(vector<room> &rooms){
 }
 
 
+void next_level(){
+	srand(time(NULL));
+
+	active_room = 0;
+	last_room = 0;
+	
+	ROOMS[active_room].has_monster = false; 
+	
+	ROOMS.clear();
+
+	generate_dungeon(ROOMS);
+	
+	dungeon_lvl += 1;
+
+	pPlayer->level_up();
+
+	display_screen d;
+
+	d.cls();
+
+	d.ascii_image(15,2,"Art/stairs");
+	d.ascii_image(20,10,"Art/levelup");
+
+	d.draw();
+	
+	get_bool("Continue?");
+
+}
+
 void draw_map(display_screen &d,const vector<room> &rooms,const int active_room){
 	
 	d.rect(1,1,SCREEN_X/1.5,SCREEN_Y/1.5,'#');
+
+	if (rooms[active_room].has_stairs){
+		d.ascii_image(0,0,"Art/small_stair");
+	}
 	
 	for (room r: rooms){
 
@@ -245,7 +291,11 @@ void draw_text(display_screen &d, vector<room> &rooms, int &active_room){
 
 	//d.rect(1, SCREEN_Y/1.5, SCREEN_X, SCREEN_Y, '=');	
 	d.print_bounds(0,(SCREEN_Y/1.5),SCREEN_X, SCREEN_Y, desc); 
+
 	
+	
+
+
 }
 
 void draw_character(display_screen &d , character &c){
@@ -256,6 +306,7 @@ void draw_character(display_screen &d , character &c){
 		d.rect(x,1,SCREEN_X,y,'$');
 	
 		d.print_bounds(x+3,3,x+15,y,c.get_stats());
+		d.print_bounds(x+3,12,x+15,y, "DUNGEON LEVEL: " + to_string(dungeon_lvl));
 }
 
 void check_lose(character &c){
@@ -289,9 +340,6 @@ void check_combat(character *player){
 
 int main(){
 
-
-
-	
 	
 	srand(time(NULL));
 
@@ -300,14 +348,12 @@ int main(){
 	
 	generate_dungeon(ROOMS);	
 
-	ROOMS[active_room].has_monster = false;
+	ROOMS[active_room].has_monster = false; 
 
 	character player = make_character();
 
 	pPlayer = &player;	
 	
-
-
 	display_screen d;
 
 	while(game_running){
@@ -329,9 +375,15 @@ int main(){
 		
 		check_lose(player);	
 	
+		pPlayer->passive_heal();			
+		pPlayer->san_drain();
+	
 	}
 
-
+	//play again code and run stats	
 
 	return 0;
+
 }
+
+

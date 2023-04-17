@@ -19,6 +19,7 @@ class character{
 			this->MAG = MAG;
 			this->SAN = SAN;
 			this->HP = HP;
+			this->MAX_HP = HP;
 
 		}			
 
@@ -49,7 +50,55 @@ class character{
 		int get_san(){
 			return SAN;
 		}
-		
+
+		int attack(){
+			return (STR / 10) + 1;
+		}
+
+		void magic_heal(){
+
+			int h =  (MAG / 10) + 2;
+			
+			if (HP + h < MAX_HP){
+				HP += h;
+			} else {
+				HP = MAX_HP;
+			}
+		}
+	
+		void passive_heal(){
+			
+			if (HP < MAX_HP){
+				HP += 1;
+			}
+
+		}	
+
+		void san_drain(){
+			
+			if (HP > MAX_HP / 2){
+				if (rand() % 10 > 7){
+					SAN -= 1;
+				}
+			} else {
+				
+				if (rand() % 10 > 5){
+					SAN -= 1;
+				}
+
+			}
+
+		}
+
+
+		void level_up(){
+			
+			MAX_HP += 4;
+			STR += 2;
+			SAN += 2;
+			MAG += 2;
+
+		}
 	
 		std::string get_stats(){
 			
@@ -89,7 +138,7 @@ class character{
 		int HP; //hit points
 		int gold = 0;			
 			
-
+		int MAX_HP = 0;
 
 };
 
