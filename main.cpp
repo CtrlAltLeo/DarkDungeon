@@ -5,17 +5,10 @@
 #include "character.h"
 #include "combat.h"
 
-
 #include <unistd.h>
 #include <string>
 #include <vector>
 #include <fstream>
-
-/* TODO
-	
-	you know what doors you've used	
-
-*/
 
 using namespace std;
 
@@ -338,9 +331,8 @@ void check_combat(character *player){
 
 }
 
-int main(){
 
-	
+void game(){
 	srand(time(NULL));
 
 	active_room = 0;
@@ -380,7 +372,19 @@ int main(){
 	
 	}
 
-	//play again code and run stats	
+}
+
+bool get_play_again(){
+
+	get_bool("Play again?");
+	
+	return get_bool("Play again?");	
+
+}
+
+int main(){
+
+	game();	
 
 	return 0;
 
